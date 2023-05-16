@@ -1,5 +1,20 @@
 # Docker Compose NAS
 
+## Install Docker and Docker Compose
+
+For Docker, follow the [official instructions](https://docs.docker.com/engine/install/).
+For Docker Compose, follow the [official instructions](https://docs.docker.com/compose/install/).
+
+### If you are using a raspberry pi 
+
+You will need to change docker temp storage to a folder with more space (Because MicroSD cards are small)
+
+```bash
+sudo vim /etc/default/docker
+# Add this line at the end with the path of your mounted external disk
+export DOCKER_TMPDIR="/mnt/storage/docker-tmp"
+```
+
 After searching for the perfect NAS solution, I realized what I wanted could be achieved 
 with some Docker containers on a vanilla Linux box. The result is an opinionated Docker Compose configuration capable of 
 browsing indexers to retrieve media resources and downloading them through a WireGuard VPN with port forwarding.
@@ -13,39 +28,41 @@ I am running it in Ubuntu Server 22.04; I also tested this setup on a [Synology 
 ## Table of Content
 
 <!-- TOC -->
-* [Docker Compose NAS](#docker-compose-nas)
-  * [Table of Content](#table-of-content)
-  * [Applications](#applications)
-  * [Quick Start](#quick-start)
-  * [Environment Variables](#environment-variables)
-  * [PIA WireGuard VPN](#pia-wireguard-vpn)
-  * [Sonarr & Radarr](#sonarr--radarr)
-    * [File Structure](#file-structure)
-    * [Download Client](#download-client)
-  * [Prowlarr](#prowlarr)
-  * [qBittorrent](#qbittorrent)
-  * [Jellyfin](#jellyfin)
-  * [Homepage](#homepage)
-  * [Traefik and SSL Certificates](#traefik-and-ssl-certificates)
-    * [Accessing from the outside with Tailscale](#accessing-from-the-outside-with-tailscale)
-  * [Optional Services](#optional-services)
-    * [FlareSolverr](#flaresolverr)
-    * [SABnzbd](#sabnzbd)
-    * [AdGuard Home](#adguard-home)
-      * [Encryption](#encryption)
-      * [DHCP](#dhcp)
-      * [Expose DNS Server with Tailscale](#expose-dns-server-with-tailscale)
-  * [Customization](#customization)
-  * [Synology Quirks](#synology-quirks)
-    * [Free Ports 80 and 443](#free-ports-80-and-443)
-    * [Install Synology WireGuard](#install-synology-wireguard)
-    * [Free Port 1900](#free-port-1900)
-    * [User Permissions](#user-permissions)
-    * [Synology DHCP Server and Adguard Home Port Conflict](#synology-dhcp-server-and-adguard-home-port-conflict)
-  * [Use Separate Paths for Torrents and Storage](#use-separate-paths-for-torrents-and-storage)
-  * [NFS Share](#nfs-share)
-  * [Static IP](#static-ip)
-  * [Laptop Specific Configuration](#laptop-specific-configuration)
+- [Docker Compose NAS](#docker-compose-nas)
+  - [Install Docker and Docker Compose](#install-docker-and-docker-compose)
+    - [If you are using a raspberry pi](#if-you-are-using-a-raspberry-pi)
+  - [Table of Content](#table-of-content)
+  - [Applications](#applications)
+  - [Quick Start](#quick-start)
+  - [Environment Variables](#environment-variables)
+  - [PIA WireGuard VPN](#pia-wireguard-vpn)
+  - [Sonarr \& Radarr](#sonarr--radarr)
+    - [File Structure](#file-structure)
+    - [Download Client](#download-client)
+  - [Prowlarr](#prowlarr)
+  - [qBittorrent](#qbittorrent)
+  - [Jellyfin](#jellyfin)
+  - [Homepage](#homepage)
+  - [Traefik and SSL Certificates](#traefik-and-ssl-certificates)
+    - [Accessing from the outside with Tailscale](#accessing-from-the-outside-with-tailscale)
+  - [Optional Services](#optional-services)
+    - [FlareSolverr](#flaresolverr)
+    - [SABnzbd](#sabnzbd)
+    - [AdGuard Home](#adguard-home)
+      - [Encryption](#encryption)
+      - [DHCP](#dhcp)
+      - [Expose DNS Server with Tailscale](#expose-dns-server-with-tailscale)
+  - [Customization](#customization)
+  - [Synology Quirks](#synology-quirks)
+    - [Free Ports 80 and 443](#free-ports-80-and-443)
+    - [Install Synology WireGuard](#install-synology-wireguard)
+    - [Free Port 1900](#free-port-1900)
+    - [User Permissions](#user-permissions)
+    - [Synology DHCP Server and Adguard Home Port Conflict](#synology-dhcp-server-and-adguard-home-port-conflict)
+  - [Use Separate Paths for Torrents and Storage](#use-separate-paths-for-torrents-and-storage)
+  - [NFS Share](#nfs-share)
+  - [Static IP](#static-ip)
+  - [Laptop Specific Configuration](#laptop-specific-configuration)
 <!-- TOC -->
 
 ## Applications
