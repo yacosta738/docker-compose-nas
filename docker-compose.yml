@@ -147,7 +147,7 @@ services:
       - homepage.widget.password=adminadmin
   
   jellyfin:
-    image: lscr.io/linuxserver/jellyfin
+    image: linuxserver/jellyfin:arm64v8-nightly
     container_name: jellyfin
     environment:
       - PUID=${USER_ID}
