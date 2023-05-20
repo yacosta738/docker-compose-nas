@@ -29,7 +29,7 @@ services:
       - ./letsencrypt:/letsencrypt
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
   sonarr:
-    image: lscr.io/linuxserver/sonarr:arm64v8-4.0.0-develop
+    image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
     environment:
       - PUID=${USER_ID}
@@ -55,7 +55,7 @@ services:
       - homepage.widget.url=http://sonarr:8989/sonarr
       - homepage.widget.key=${SONARR_API_KEY}
   radarr:
-    image: lscr.io/linuxserver/sonarr:arm64v8-4.0.0-develop
+    image: lscr.io/linuxserver/sonarr:latest
     container_name: radarr
     environment:
       - PUID=${USER_ID}
@@ -147,7 +147,7 @@ services:
       - homepage.widget.password=adminadmin
   
   jellyfin:
-    image: linuxserver/jellyfin:arm64v8-nightly
+    image: lscr.io/linuxserver/jellyfin
     container_name: jellyfin
     environment:
       - PUID=${USER_ID}
