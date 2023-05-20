@@ -145,7 +145,7 @@ services:
       - homepage.widget.type=qbittorrent
       - homepage.widget.url=http://qbittorrent:8080
       - homepage.widget.username=admin
-      - homepage.widget.password=adminadmin
+      - homepage.widget.password=${QBITTORRENT_PASSWORD}
   
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
