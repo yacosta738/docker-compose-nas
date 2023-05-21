@@ -115,11 +115,11 @@ services:
     volumes:
       - ./qbittorrent:/config
       - ${DOWNLOAD_ROOT}:/data/torrents
-#    ports:
-#      - 8080:8080
-#      - 6881:6881
-#      - 6881:6881/udp
     restart: always
+    network_mode: "service:vpn"
+#    depends_on:
+#      vpn:
+#        condition: service_healthy
     labels:
       - traefik.enable=true
       - traefik.http.routers.qbittorrent.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/qbittorrent`))
@@ -141,10 +141,41 @@ services:
       - homepage.description=Bittorrent client
       - homepage.weight=5
       - homepage.widget.type=qbittorrent
-      - homepage.widget.url=http://qbittorrent:8080
+      - homepage.widget.url=http://vpn:8080
       - homepage.widget.username=admin
       - homepage.widget.password=${QBITTORRENT_PASSWORD}
-  
+  vpn:
+    image: ghcr.io/tprasadtp/protonwire:latest
+    container_name: vpn
+    # Use semver tags or sha256 hashes of manifests.
+    # using latest tag can lead to issues when used with
+    # automatic image updaters like watchtower.
+    init: true
+    restart: unless-stopped
+    environment:
+      # Quote this value as server name can contain '#'.
+      PROTONVPN_SERVER: "${PROTONVPN_SERVER}"
+      # WireGuard private key.
+      WIREGUARD_PRIVATE_KEY: ${WIREGUARD_PRIVATE_KEY}
+      # Set this to 1 to show debug logs for issue forms.
+      DEBUG: "1"
+      # Set this to 1 to enable kill-switch.
+      KILL_SWITCH: "1"
+    # NET_ADMIN capability is mandatory!
+    cap_add:
+      - NET_ADMIN
+    # sysctl net.ipv4.conf.all.rp_filter is mandatory!
+    # net.ipv6.conf.all.disable_ipv6 disables IPv6 as protonVPN does not support IPv6.
+    # 'net.*' sysctls are not required on application containers,
+    # as they share network stack with protonwire container.
+    sysctls:
+      net.ipv4.conf.all.rp_filter: 2
+      net.ipv6.conf.all.disable_ipv6: 1
+    volumes:
+      - type: tmpfs
+        target: /tmp
+    ports:
+      - 8080:8080
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
     container_name: jellyfin
