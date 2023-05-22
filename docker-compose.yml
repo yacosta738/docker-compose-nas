@@ -10,6 +10,8 @@ services:
     command:
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
+      - --api.dashboard=true
+      - --api.insecure=true
       - --entrypoints.web.address=:80
       - --entrypoints.web-secure.address=:443
       - --entrypoints.web.http.redirections.entryPoint.to=web-secure
@@ -23,10 +25,25 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "18080:8080"
     volumes:
       - ./letsencrypt:/letsencrypt
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - traefik.http.routers.dashboard.rule=(Host(`${HOSTNAME}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`)))
+      - traefik.http.routers.dashboard.service=api@internal
+      - traefik.http.routers.dashboard.tls=true
+      - traefik.http.routers.dashboard.tls.certresolver=myresolver
+      - traefik.http.services.dashboard.loadbalancer.server.port=8080
+      - traefik.http.routers.dashboard.entrypoints=web-secure
+      - traefik.http.routers.dashboard.priority=1
+      - homepage.group=System
+      - homepage.name=Traefik
+      - homepage.icon=traefik.png
+      - homepage.href=/dashboard
+      - homepage.description=Reverse proxy
+      - homepage.weight=0
+      - homepage.widget.type=traefik
+      - homepage.widget.url=http://traefik:8080
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
@@ -116,10 +133,10 @@ services:
       - ./qbittorrent:/config
       - ${DOWNLOAD_ROOT}:/data/torrents
     restart: always
-    network_mode: "service:vpn"
-#    depends_on:
-#      vpn:
-#        condition: service_healthy
+    #network_mode: "service:vpn"
+   # depends_on:
+   #   vpn:
+   #     condition: service_healthy
     labels:
       - traefik.enable=true
       - traefik.http.routers.qbittorrent.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/qbittorrent`))
@@ -141,41 +158,41 @@ services:
       - homepage.description=Bittorrent client
       - homepage.weight=5
       - homepage.widget.type=qbittorrent
-      - homepage.widget.url=http://vpn:8080
+      - homepage.widget.url=http://qbittorrent:8080
       - homepage.widget.username=admin
       - homepage.widget.password=${QBITTORRENT_PASSWORD}
-  vpn:
-    image: ghcr.io/tprasadtp/protonwire:latest
-    container_name: vpn
-    # Use semver tags or sha256 hashes of manifests.
-    # using latest tag can lead to issues when used with
-    # automatic image updaters like watchtower.
-    init: true
-    restart: unless-stopped
-    environment:
-      # Quote this value as server name can contain '#'.
-      PROTONVPN_SERVER: "${PROTONVPN_SERVER}"
-      # WireGuard private key.
-      WIREGUARD_PRIVATE_KEY: ${WIREGUARD_PRIVATE_KEY}
-      # Set this to 1 to show debug logs for issue forms.
-      DEBUG: "1"
-      # Set this to 1 to enable kill-switch.
-      KILL_SWITCH: "1"
-    # NET_ADMIN capability is mandatory!
-    cap_add:
-      - NET_ADMIN
-    # sysctl net.ipv4.conf.all.rp_filter is mandatory!
-    # net.ipv6.conf.all.disable_ipv6 disables IPv6 as protonVPN does not support IPv6.
-    # 'net.*' sysctls are not required on application containers,
-    # as they share network stack with protonwire container.
-    sysctls:
-      net.ipv4.conf.all.rp_filter: 2
-      net.ipv6.conf.all.disable_ipv6: 1
-    volumes:
-      - type: tmpfs
-        target: /tmp
-    ports:
-      - 8080:8080
+  # vpn:
+  #   image: ghcr.io/tprasadtp/protonwire:latest
+  #   container_name: vpn
+  #   # Use semver tags or sha256 hashes of manifests.
+  #   # using latest tag can lead to issues when used with
+  #   # automatic image updaters like watchtower.
+  #   init: true
+  #   restart: unless-stopped
+  #   environment:
+  #     # Quote this value as server name can contain '#'.
+  #     PROTONVPN_SERVER: "${PROTONVPN_SERVER}"
+  #     # WireGuard private key.
+  #     WIREGUARD_PRIVATE_KEY: ${WIREGUARD_PRIVATE_KEY}
+  #     # Set this to 1 to show debug logs for issue forms.
+  #     DEBUG: "1"
+  #     # Set this to 1 to enable kill-switch.
+  #     KILL_SWITCH: "1"
+  #   # NET_ADMIN capability is mandatory!
+  #   cap_add:
+  #     - NET_ADMIN
+  #   # sysctl net.ipv4.conf.all.rp_filter is mandatory!
+  #   # net.ipv6.conf.all.disable_ipv6 disables IPv6 as protonVPN does not support IPv6.
+  #   # 'net.*' sysctls are not required on application containers,
+  #   # as they share network stack with protonwire container.
+  #   sysctls:
+  #     net.ipv4.conf.all.rp_filter: 2
+  #     net.ipv6.conf.all.disable_ipv6: 1
+  #   volumes:
+  #     - type: tmpfs
+  #       target: /tmp
+  #   ports:
+  #     - 8080:8080
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
     container_name: jellyfin
