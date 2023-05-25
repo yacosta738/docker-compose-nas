@@ -5,14 +5,9 @@
 - System:
     - Naspy:
         icon: openmediavault.png
-        href: https://192.168.1.23:980
-        description: Nas UI Control Center
-    - Portainer:
-        icon: portainer.png
-        href: https://192.168.1.23:19443
-        description: Docker UI Control Center
-        widget:
-    	type: portainer
-    	url: https://192.168.1.23:19443
-    	env: 1
-    	key: ptr_XbwR8WtVrFaAJFG82j7lH/Bs2h6A4zZu4sjSG0UE/0c=
+        href: http://192.168.1.23:980
+        description: Nas UI Control 
+    - Router:
+        icon: router.png
+        href: http://192.168.1.1
+        description: Home router
