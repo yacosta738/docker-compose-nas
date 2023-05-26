@@ -14,6 +14,7 @@ services:
       - --providers.docker.exposedbydefault=false
       - --api.dashboard=true
       - --api.insecure=true
+      - --log.level=ERROR
       - --entrypoints.web.address=:80
       - --entrypoints.web-secure.address=:443
       - --entrypoints.web.http.redirections.entryPoint.to=web-secure
@@ -24,6 +25,7 @@ services:
       - --certificatesresolvers.myresolver.acme.caserver=${LETS_ENCRYPT_CA_SERVER:-https://acme-v02.api.letsencrypt.org/directory}
       - --certificatesresolvers.myresolver.acme.email=${LETS_ENCRYPT_EMAIL}
       - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web
     ports:
       - "80:80"
       - "443:443"
@@ -41,6 +43,10 @@ services:
       - traefik.http.services.dashboard.loadbalancer.server.port=8080
       - traefik.http.routers.dashboard.entrypoints=web-secure
       - traefik.http.routers.dashboard.priority=1
+      - traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)
+      - traefik.http.routers.http-catchall.entrypoints=web
+      - traefik.http.routers.http-catchall.middlewares=redirect-to-https
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
       - homepage.group=System
       - homepage.name=Traefik
       - homepage.icon=traefik.png
