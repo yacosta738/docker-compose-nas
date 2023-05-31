@@ -27,3 +27,5 @@ docker-compose.override.yml
 !/adguardhome/work/.gitkeep
 /sabnzbd
 !/sabnzbd/.gitkeep
+/bazarr
+!/bazarr/.gitkeep

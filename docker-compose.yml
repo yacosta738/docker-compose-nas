@@ -65,7 +65,7 @@ services:
     volumes:
       - ./sonarr:/config
       - ${DATA_ROOT}:/data
-    restart: always
+    restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.routers.sonarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/sonarr`))
@@ -91,7 +91,7 @@ services:
     volumes:
       - ./radarr:/config
       - ${DATA_ROOT}:/data
-    restart: always
+    restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.routers.radarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/radarr`))
@@ -107,6 +107,32 @@ services:
       - homepage.widget.type=radarr
       - homepage.widget.url=http://radarr:7878/radarr
       - homepage.widget.key=${RADARR_API_KEY}
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=${TIMEZONE}
+    volumes:
+      - ./bazarr:/config
+      - ${DATA_ROOT}:/data
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.bazarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/bazarr`))
+      - traefik.http.routers.bazarr.tls=true
+      - traefik.http.routers.bazarr.tls.certresolver=myresolver
+      - traefik.http.services.bazarr.loadbalancer.server.port=6767
+      - homepage.group=Download
+      - homepage.name=Bazarr
+      - homepage.icon=bazarr.png
+      - homepage.href=/bazarr
+      - homepage.description=Subtitles management
+      - homepage.weight=3
+      - homepage.widget.type=bazarr
+      - homepage.widget.url=http://bazarr:6767/bazarr
+      - homepage.widget.key=${BAZARR_API_KEY}
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
@@ -116,7 +142,7 @@ services:
       - TZ=${TIMEZONE}
     volumes:
       - ./prowlarr:/config
-    restart: always
+    restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.routers.prowlarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/prowlarr`))
@@ -143,7 +169,7 @@ services:
     volumes:
       - ./qbittorrent:/config
       - ${DOWNLOAD_ROOT}:/data/torrents
-    restart: always
+    restart: unless-stopped
     #network_mode: "service:vpn"
    # depends_on:
    #   vpn:
@@ -221,7 +247,7 @@ services:
 #    devices:
 #      - /dev/dri/renderD128:/dev/dri/renderD128
 #      - /dev/dri/card0:/dev/dri/card0
-    restart: always
+    restart: unless-stopped
     labels:
       - traefik.enable=true
       - traefik.http.routers.jellyfin.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/jellyfin`))
@@ -260,7 +286,7 @@ services:
       - ./homepage:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${DATA_ROOT}:/data
-    restart: always
+    restart: unless-stopped
     command: [sh, -c, "cp -n /app/config/tpl/*.yaml /app/config && node server.js"]
     labels:
       - traefik.enable=true
