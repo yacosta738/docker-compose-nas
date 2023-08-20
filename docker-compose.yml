@@ -274,7 +274,7 @@ services:
       image: jaymoulin/plex
       container_name: plex
       ports:
-       - 32400:32400
+      #  - 32400:32400
        - 33400:33400
       hostname: plex
       environment:
