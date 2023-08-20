@@ -290,6 +290,7 @@ services:
         - traefik.http.routers.plex.tls=true
         - traefik.http.routers.plex.tls.certresolver=myresolver
         - traefik.http.services.plex.loadbalancer.server.port=32400
+        - traefik.http.routers.plex.middlewares=chain-no-auth@file
         - homepage.group=Media
         - homepage.name=Plex
         - homepage.icon=plex.png
