@@ -35,13 +35,13 @@ I am running it in Ubuntu Server 22.04; I also tested this setup on a [Synology 
   - [Applications](#applications)
   - [Quick Start](#quick-start)
   - [Environment Variables](#environment-variables)
-  - [PIA WireGuard VPN](#pia-wireguard-vpn)
   - [Sonarr \& Radarr](#sonarr--radarr)
     - [File Structure](#file-structure)
     - [Download Client](#download-client)
   - [Prowlarr](#prowlarr)
   - [qBittorrent](#qbittorrent)
   - [Jellyfin](#jellyfin)
+  - [Plex](#plex)
   - [Homepage](#homepage)
   - [Traefik and SSL Certificates](#traefik-and-ssl-certificates)
     - [Accessing from the outside with Tailscale](#accessing-from-the-outside-with-tailscale)
@@ -194,6 +194,19 @@ devices:
 Generally, running Docker on Linux you will want to use VA-API, but the exact mount paths may differ depending on your
 hardware.
 
+## Plex
+
+To enable [hardware transcoding](https://support.plex.tv/articles/115002178853-using-hardware-accelerated-streaming/),
+depending on your system, you may need to update the following block:
+
+```
+devices:
+  - /dev/dri/renderD128:/dev/dri/renderD128
+  - /dev/dri/card0:/dev/dri/card0
+```
+
+Generally, running Docker on Linux you will want to use VA-API, but the exact mount paths may differ depending on your
+hardware.
 ## Homepage
 
 The homepage comes with sensible defaults; some settings can ben controlled via environment variables in `.env`.

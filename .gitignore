@@ -29,3 +29,5 @@ docker-compose.override.yml
 !/sabnzbd/.gitkeep
 /bazarr
 !/bazarr/.gitkeep
+/plex
+!/plex/.gitkeep
