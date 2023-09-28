@@ -281,8 +281,8 @@ services:
         - TZ=Europe/Madrid
       volumes:
         - ./plex/Plex Media Server:/root/Library/Application Support/Plex Media Server
-        - ${DATA_ROOT}:/media
-        - ${DATA_STORAGE}:/media
+        - ${DATA_ROOT}:/media/
+        - ${DATA_STORAGE}:/media/storage
         - ./plex/tmp:/tmp
       restart: unless-stopped
       labels:
