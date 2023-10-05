@@ -71,4 +71,4 @@ done
 sed -i.bak "s/<BaseUrl \/>/<BaseUrl>\/jellyfin<\/BaseUrl>/" ./jellyfin/network.xml && rm ./jellyfin/network.xml.bak
 
 echo "Restarting containers..."
-docker compose restart radarr sonarr prowlarr # jellyfin
+docker compose restart radarr sonarr prowlarr #jellyfin

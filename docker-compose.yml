@@ -274,21 +274,32 @@ services:
       image: jaymoulin/plex
       container_name: plex
       ports:
-       - 32400:32400
-       - 33400:33400
+      - 32469:32469
+      - 32400:32400
+      - 32401:32401
+      - 3005:3005
+      - 8324:8324
+      - 1900:1900/udp
+      - 32410:32410/udp
+      - 32412:32412/udp
+      - 32413:32413/udp
+      - 32414:32414/udp
       hostname: plex
       environment:
+        - PUID=${USER_ID}
+        - PGID=${GROUP_ID}
         - TZ=Europe/Madrid
       volumes:
         - ./plex/Plex Media Server:/root/Library/Application Support/Plex Media Server
-        - ${DATA_ROOT}:/media/
-        - ${DATA_STORAGE}:/media/storage
+        - ${DATA_ROOT}:/media
         - ./plex/tmp:/tmp
       restart: unless-stopped
       labels:
         - gpus=all
         - traefik.enable=true
         - traefik.http.routers.plex.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/plex`))
+        - traefik.frontend.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/plex`))
+        - traefik.port=32400 
         - traefik.http.routers.plex.tls=true
         - traefik.http.routers.plex.tls.certresolver=myresolver
         - traefik.http.routers.plex.middlewares=security-headers
