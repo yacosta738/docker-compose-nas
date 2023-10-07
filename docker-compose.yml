@@ -271,7 +271,7 @@ services:
 #       - homepage.widget.url=http://jellyfin:8096/jellyfin
 #       - homepage.widget.key=${JELLYFIN_API_KEY}
   plex:
-      image: jaymoulin/plex
+      image: lscr.io/linuxserver/plex:latest
       container_name: plex
       ports:
       - 32469:32469
@@ -289,10 +289,13 @@ services:
         - PUID=${USER_ID}
         - PGID=${GROUP_ID}
         - TZ=Europe/Madrid
+        - VERSION=docker 
+        - PLEX_CLAIM=${PLEX_CLAIM}  
       volumes:
-        - ./plex/Plex Media Server:/root/Library/Application Support/Plex Media Server
-        - ${DATA_ROOT}:/media
-        - ./plex/tmp:/tmp
+        - ./plex/config:/config
+        - ${DATA_ROOT}:/data
+        - ${DATA_STORAGE}:/storage 
+        - ./plex/trasncode:/transcode
       restart: unless-stopped
       labels:
         - gpus=all
