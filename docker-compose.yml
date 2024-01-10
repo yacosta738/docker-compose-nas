@@ -320,7 +320,7 @@ services:
         - homepage.widget.url=http://plex:32400/web
         - homepage.widget.key=${PLEX_API_KEY}
   homepage:
-    image: ghcr.io/benphelps/homepage:latest
+    image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
     environment:
       - HOMEPAGE_VAR_TITLE=${HOMEPAGE_VAR_TITLE}
