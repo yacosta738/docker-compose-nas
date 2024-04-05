@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.sonarr.entrypoints=websecure
+      - traefik.http.routers.sonarr.entrypoints=web,websecure
       - traefik.http.routers.sonarr.rule=(Host(`sonarr.${HOSTNAME}`))
       - traefik.http.routers.sonarr.tls=true
       - traefik.http.routers.sonarr.tls.certresolver=cloudflare
@@ -34,7 +34,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.radarr.entrypoints=websecure
+      - traefik.http.routers.radarr.entrypoints=web,websecure
       - traefik.http.routers.radarr.rule=(Host(`radarr.${HOSTNAME}`))
       - traefik.http.routers.radarr.tls=true
       - traefik.http.routers.radarr.tls.certresolver=cloudflare
@@ -52,7 +52,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.bazarr.entrypoints=websecure
+      - traefik.http.routers.bazarr.entrypoints=web,websecure
       - traefik.http.routers.bazarr.rule=(Host(`bazarr.${HOSTNAME}`))
       - traefik.http.routers.bazarr.tls=true
       - traefik.http.services.bazarr.tls.certresolver=cloudflare
@@ -69,7 +69,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.prowlarr.entrypoints=websecure
+      - traefik.http.routers.prowlarr.entrypoints=web,websecure
       - traefik.http.routers.prowlarr.rule=(Host(`prowlarr.${HOSTNAME}`))
       - traefik.http.routers.prowlarr.tls=true
       - traefik.http.services.prowlarr.tls.certresolver=cloudflare
@@ -88,7 +88,7 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.qbittorrent.entrypoints=websecure
+      - traefik.http.routers.qbittorrent.entrypoints=web,websecure
       - traefik.http.routers.qbittorrent.rule=(Host(`qbittorrent.${HOSTNAME}`))
       - traefik.http.routers.qbittorrent.tls=true
       - traefik.http.routers.qbittorrent.tls.certresolver=cloudflare
@@ -130,7 +130,7 @@ services:
       labels:
         - gpus=all
         - traefik.enable=true
-        - traefik.http.routers.plex.entrypoints=websecure
+        - traefik.http.routers.plex.entrypoints=web,websecure
         - traefik.http.routers.plex.rule=(Host(`plex-v2.${HOSTNAME}`))
         - traefik.frontend.rule=Host:plex-v2.${HOSTNAME}
         - traefik.port=32400 
