@@ -16,9 +16,10 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.sonarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/sonarr`))
+      - traefik.http.routers.sonarr.entrypoints=websecure
+      - traefik.http.routers.sonarr.rule=(Host(`sonarr.${HOSTNAME}`))
       - traefik.http.routers.sonarr.tls=true
-      - traefik.http.routers.sonarr.tls.certresolver=myresolver
+      - traefik.http.routers.sonarr.tls.certresolver=cloudflare
       - traefik.http.services.sonarr.loadbalancer.server.port=8989
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -33,9 +34,10 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.radarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/radarr`))
+      - traefik.http.routers.radarr.entrypoints=websecure
+      - traefik.http.routers.radarr.rule=(Host(`radarr.${HOSTNAME}`))
       - traefik.http.routers.radarr.tls=true
-      - traefik.http.routers.radarr.tls.certresolver=myresolver
+      - traefik.http.routers.radarr.tls.certresolver=cloudflare
       - traefik.http.services.radarr.loadbalancer.server.port=7878
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
@@ -50,9 +52,10 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.bazarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/bazarr`))
+      - traefik.http.routers.bazarr.entrypoints=websecure
+      - traefik.http.routers.bazarr.rule=(Host(`bazarr.${HOSTNAME}`))
       - traefik.http.routers.bazarr.tls=true
-      - traefik.http.routers.bazarr.tls.certresolver=myresolver
+      - traefik.http.services.bazarr.tls.certresolver=cloudflare
       - traefik.http.services.bazarr.loadbalancer.server.port=6767
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
@@ -66,9 +69,10 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.prowlarr.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/prowlarr`))
+      - traefik.http.routers.prowlarr.entrypoints=websecure
+      - traefik.http.routers.prowlarr.rule=(Host(`prowlarr.${HOSTNAME}`))
       - traefik.http.routers.prowlarr.tls=true
-      - traefik.http.routers.prowlarr.tls.certresolver=myresolver
+      - traefik.http.services.prowlarr.tls.certresolver=cloudflare
       - traefik.http.services.prowlarr.loadbalancer.server.port=9696
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:libtorrentv1
@@ -82,15 +86,12 @@ services:
       - ./qbittorrent:/config
       - ${DOWNLOAD_ROOT}:/data/torrents
     restart: unless-stopped
-    #network_mode: "service:vpn"
-   # depends_on:
-   #   vpn:
-   #     condition: service_healthy
     labels:
       - traefik.enable=true
-      - traefik.http.routers.qbittorrent.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/qbittorrent`))
+      - traefik.http.routers.qbittorrent.entrypoints=websecure
+      - traefik.http.routers.qbittorrent.rule=(Host(`qbittorrent.${HOSTNAME}`))
       - traefik.http.routers.qbittorrent.tls=true
-      - traefik.http.routers.qbittorrent.tls.certresolver=myresolver
+      - traefik.http.routers.qbittorrent.tls.certresolver=cloudflare
       - traefik.http.services.qbittorrent.loadbalancer.server.port=8080
       - traefik.http.routers.qbittorrent.middlewares=qbittorrent-strip-slash,qbittorrent-stripprefix
       # https://github.com/qbittorrent/qBittorrent/issues/5693#issuecomment-552146296
@@ -129,11 +130,12 @@ services:
       labels:
         - gpus=all
         - traefik.enable=true
-        - traefik.http.routers.plex.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/plex`))
-        - traefik.frontend.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/plex`))
+        - traefik.http.routers.plex.entrypoints=websecure
+        - traefik.http.routers.plex.rule=(Host(`plex-v2.${HOSTNAME}`))
+        - traefik.frontend.rule=Host:plex-v2.${HOSTNAME}
         - traefik.port=32400 
         - traefik.http.routers.plex.tls=true
-        - traefik.http.routers.plex.tls.certresolver=myresolver
+        - traefik.http.routers.plex.tls.certresolver=cloudflare
         - traefik.http.routers.plex.middlewares=security-headers
         - traefik.http.routers.plex.tls.options=default
         - traefik.http.services.plex.loadbalancer.server.port=32400
