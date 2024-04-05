@@ -47,14 +47,6 @@ services:
       - traefik.http.routers.http-catchall.entrypoints=web
       - traefik.http.routers.http-catchall.middlewares=redirect-to-https
       - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
-      - homepage.group=System
-      - homepage.name=Traefik
-      - homepage.icon=traefik.png
-      - homepage.href=/dashboard
-      - homepage.description=Reverse proxy
-      - homepage.weight=0
-      - homepage.widget.type=traefik
-      - homepage.widget.url=http://traefik:8080
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
@@ -72,15 +64,6 @@ services:
       - traefik.http.routers.sonarr.tls=true
       - traefik.http.routers.sonarr.tls.certresolver=myresolver
       - traefik.http.services.sonarr.loadbalancer.server.port=8989
-      - homepage.group=Media
-      - homepage.name=Sonarr
-      - homepage.icon=sonarr.png
-      - homepage.href=/sonarr
-      - homepage.description=Series management
-      - homepage.weight=0
-      - homepage.widget.type=sonarr
-      - homepage.widget.url=http://sonarr:8989/sonarr
-      - homepage.widget.key=${SONARR_API_KEY}
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
@@ -98,15 +81,6 @@ services:
       - traefik.http.routers.radarr.tls=true
       - traefik.http.routers.radarr.tls.certresolver=myresolver
       - traefik.http.services.radarr.loadbalancer.server.port=7878
-      - homepage.group=Media
-      - homepage.name=Radarr
-      - homepage.icon=radarr.png
-      - homepage.href=/radarr
-      - homepage.description=Movies management
-      - homepage.weight=1
-      - homepage.widget.type=radarr
-      - homepage.widget.url=http://radarr:7878/radarr
-      - homepage.widget.key=${RADARR_API_KEY}
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
     container_name: bazarr
@@ -124,15 +98,6 @@ services:
       - traefik.http.routers.bazarr.tls=true
       - traefik.http.routers.bazarr.tls.certresolver=myresolver
       - traefik.http.services.bazarr.loadbalancer.server.port=6767
-      - homepage.group=Download
-      - homepage.name=Bazarr
-      - homepage.icon=bazarr.png
-      - homepage.href=/bazarr
-      - homepage.description=Subtitles management
-      - homepage.weight=3
-      - homepage.widget.type=bazarr
-      - homepage.widget.url=http://bazarr:6767/bazarr
-      - homepage.widget.key=${BAZARR_API_KEY}
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
@@ -149,15 +114,6 @@ services:
       - traefik.http.routers.prowlarr.tls=true
       - traefik.http.routers.prowlarr.tls.certresolver=myresolver
       - traefik.http.services.prowlarr.loadbalancer.server.port=9696
-      - homepage.group=Download
-      - homepage.name=Prowlarr
-      - homepage.icon=prowlarr.png
-      - homepage.href=/prowlarr
-      - homepage.description=Indexers management
-      - homepage.weight=4
-      - homepage.widget.type=prowlarr
-      - homepage.widget.url=http://prowlarr:9696/prowlarr
-      - homepage.widget.key=${PROWLARR_API_KEY}
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:libtorrentv1
     container_name: qbittorrent
@@ -187,89 +143,6 @@ services:
       - traefik.http.middlewares.qbittorrent-strip-slash.redirectregex.regex=(^.*\/qbittorrent$$)
       - traefik.http.middlewares.qbittorrent-strip-slash.redirectregex.replacement=$$1/
       - traefik.http.middlewares.qbittorrent-strip-slash.redirectregex.permanent=false
-      #- com.centurylinklabs.watchtower.depends-on=/vpn
-      - homepage.group=Download
-      - homepage.name=qBittorrent
-      - homepage.icon=qbittorrent.png
-      - homepage.href=/qbittorrent
-      - homepage.description=Bittorrent client
-      - homepage.weight=5
-      - homepage.widget.type=qbittorrent
-      - homepage.widget.url=http://qbittorrent:8080
-      - homepage.widget.username=admin
-      - homepage.widget.password=${QBITTORRENT_PASSWORD}
-  # vpn:
-  #   image: ghcr.io/tprasadtp/protonwire:latest
-  #   container_name: vpn
-  #   # Use semver tags or sha256 hashes of manifests.
-  #   # using latest tag can lead to issues when used with
-  #   # automatic image updaters like watchtower.
-  #   init: true
-  #   restart: unless-stopped
-  #   environment:
-  #     # Quote this value as server name can contain '#'.
-  #     PROTONVPN_SERVER: "${PROTONVPN_SERVER}"
-  #     # WireGuard private key.
-  #     WIREGUARD_PRIVATE_KEY: ${WIREGUARD_PRIVATE_KEY}
-  #     # Set this to 1 to show debug logs for issue forms.
-  #     DEBUG: "1"
-  #     # Set this to 1 to enable kill-switch.
-  #     KILL_SWITCH: "1"
-  #   # NET_ADMIN capability is mandatory!
-  #   cap_add:
-  #     - NET_ADMIN
-  #   # sysctl net.ipv4.conf.all.rp_filter is mandatory!
-  #   # net.ipv6.conf.all.disable_ipv6 disables IPv6 as protonVPN does not support IPv6.
-  #   # 'net.*' sysctls are not required on application containers,
-  #   # as they share network stack with protonwire container.
-  #   sysctls:
-  #     net.ipv4.conf.all.rp_filter: 2
-  #     net.ipv6.conf.all.disable_ipv6: 1
-  #   volumes:
-  #     - type: tmpfs
-  #       target: /tmp
-  #   ports:
-  #     - 8080:8080
-#   jellyfin:
-#     image: lscr.io/linuxserver/jellyfin
-#     container_name: jellyfin
-#     environment:
-#       - PUID=${USER_ID}
-#       - PGID=${GROUP_ID}
-#       - TZ=${TIMEZONE}
-#       - JELLYFIN_PublishedServerUrl=${HOSTNAME}/jellyfin
-#     volumes:
-#       - ./jellyfin:/config
-#       - ${DATA_ROOT}:/data
-#     ports:
-#       - "7359:7359/udp"
-#       - "1900:1900/udp"
-# #    devices:
-# #      - /dev/dri/renderD128:/dev/dri/renderD128
-# #      - /dev/dri/card0:/dev/dri/card0
-#     restart: unless-stopped
-#     labels:
-#       - traefik.enable=true
-#       - traefik.http.routers.jellyfin.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/jellyfin`))
-#       - traefik.http.routers.jellyfin.tls=true
-#       - traefik.http.routers.jellyfin.tls.certresolver=myresolver
-#       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
-#       ## Middleware
-#       - traefik.http.routers.jellyfin.middlewares=jellyfin-mw
-#       #### The customResponseHeaders option lists the Header names and values to apply to the response.
-#       - traefik.http.middlewares.jellyfin-mw.headers.customResponseHeaders.X-Robots-Tag=noindex,nofollow,nosnippet,noarchive,notranslate,noimageindex
-#       #### Content-Security-Policy
-#       - "traefik.http.middlewares.jellyfin-mw.headers.customResponseHeaders.Content-Security-Policy=default-src https: data: blob:; style-src 'self' 'unsafe-inline' https://ctalvio.github.io/Monochromic/default_style.css https://ctalvio.github.io/Monochromic/jfblue_style.css https://ctalvio.github.io/Monochromic/jfpurple_style.css https://ctalvio.github.io/Monochromic/bottom-progress_style.css https://ctalvio.github.io/Monochromic/customcolor-advanced_style.css https://ctalvio.github.io/Monochromic/improve-performance_style.css https://ctalvio.github.io/Kaleidochromic/default_style.css https://fonts.googleapis.com/css2; script-src 'self' 'unsafe-inline' https://www.gstatic.com/cv/js/sender/v1/cast_sender.js https://www.youtube.com/iframe_api https://s.ytimg.com worker-src 'self' blob:; connect-src 'self'; object-src 'none'; frame-ancestors 'self'"
-
-#       - homepage.group=Media
-#       - homepage.name=Jellyfin
-#       - homepage.icon=jellyfin.png
-#       - homepage.href=/jellyfin
-#       - homepage.description=Media server
-#       - homepage.weight=3
-#       - homepage.widget.type=jellyfin
-#       - homepage.widget.url=http://jellyfin:8096/jellyfin
-#       - homepage.widget.key=${JELLYFIN_API_KEY}
   plex:
       image: lscr.io/linuxserver/plex:latest
       container_name: plex
@@ -310,39 +183,6 @@ services:
         - traefik.http.services.plex.loadbalancer.server.port=32400
         - traefik.http.routers.plex.middlewares=chain-no-auth@file
         - traefik.http.routers.plex.middlewares=chain-oauth@file
-        - homepage.group=Media
-        - homepage.name=Plex
-        - homepage.icon=plex.png
-        - homepage.href=/plex
-        - homepage.description=Media server
-        - homepage.weight=3
-        - homepage.widget.type=plex
-        - homepage.widget.url=http://plex:32400/web
-        - homepage.widget.key=${PLEX_API_KEY}
-  homepage:
-    image: ghcr.io/gethomepage/homepage:latest
-    container_name: homepage
-    environment:
-      - HOMEPAGE_VAR_TITLE=${HOMEPAGE_VAR_TITLE}
-      - HOMEPAGE_VAR_SEARCH_PROVIDER=${HOMEPAGE_VAR_SEARCH_PROVIDER}
-      - HOMEPAGE_VAR_HEADER_STYLE=${HOMEPAGE_VAR_HEADER_STYLE}
-      - HOMEPAGE_VAR_WEATHER_CITY=${HOMEPAGE_VAR_WEATHER_CITY}
-      - HOMEPAGE_VAR_WEATHER_LAT=${HOMEPAGE_VAR_WEATHER_LAT}
-      - HOMEPAGE_VAR_WEATHER_LONG=${HOMEPAGE_VAR_WEATHER_LONG}
-      - HOMEPAGE_VAR_WEATHER_TIME=${TIMEZONE}
-      - HOMEPAGE_VAR_WEATHER_UNIT=${HOMEPAGE_VAR_WEATHER_UNIT}
-    volumes:
-      - ./homepage:/app/config
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ${DATA_ROOT}:/data
-    restart: unless-stopped
-    command: [sh, -c, "cp -n /app/config/tpl/*.yaml /app/config && node server.js"]
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.homepage.rule=(Host(`${HOSTNAME}`) && PathPrefix(`/`))
-      - traefik.http.routers.homepage.tls=true
-      - traefik.http.routers.homepage.tls.certresolver=myresolver
-      - traefik.http.services.homepage.loadbalancer.server.port=3000
   watchtower:
     image: containrrr/watchtower
     container_name: watchtower
@@ -351,6 +191,19 @@ services:
       - WATCHTOWER_CLEANUP=true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+  dockerproxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    container_name: dockerproxy
+    environment:
+      - CONTAINERS=1 # Allow access to viewing containers
+      - SERVICES=1 # Allow access to viewing services (necessary when using Docker Swarm)
+      - TASKS=1 # Allow access to viewing tasks (necessary when using Docker Swarm)
+      - POST=0 # Disallow any POST operations (effectively read-only)
+    ports:
+      - 127.0.0.1:2375:2375
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
+    restart: unless-stopped
 
 networks:
   default:
