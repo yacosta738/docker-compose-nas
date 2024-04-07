@@ -15,5 +15,4 @@ services:
       - CF_DNS_API_TOKEN=$CF_DNS_API_TOKEN
     networks:
       - default
-      - nas-proxy-external
     restart: unless-stopped
